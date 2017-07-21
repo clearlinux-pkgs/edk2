@@ -1,0 +1,144 @@
+From aa68e828605c19ea1ae354dbc4aa8515601bca47 Mon Sep 17 00:00:00 2001
+From: Josue David Hernandez Gutierrez <josue.d.hernandez.gutierrez@intel.com>
+Date: Fri, 14 Jul 2017 17:46:31 -0500
+Subject: [PATCH] disabling features to reduce OVMF.fd boot time
+
+based in commid id: af961a23b8d70aa524f6d2513b6424b3be0893f3
+for a previous version of edk2 on clear, Network, USB and floppy
+support in Bios has been disabled
+
+Suggested-by: Arjan van de Ven <arjan@linux.intel.com>
+Signed-off-by: Josue David Hernandez Gutierrez <josue.d.hernandez.gutierrez@intel.com>
+---
+ OvmfPkg/OvmfPkgX64.dsc | 12 ++++----
+ OvmfPkg/OvmfPkgX64.fdf | 80 +++++++++++++++++++++++++-------------------------
+ 2 files changed, 46 insertions(+), 46 deletions(-)
+
+diff --git a/OvmfPkg/OvmfPkgX64.dsc b/OvmfPkg/OvmfPkgX64.dsc
+index e1fc7db..acca533 100644
+--- a/OvmfPkg/OvmfPkgX64.dsc
++++ b/OvmfPkg/OvmfPkgX64.dsc
+@@ -747,12 +747,12 @@
+   #
+   # Usb Support
+   #
+-  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
+-  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
+-  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+-  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+-  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+-  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
++#  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
++#  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
++#  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
++#  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
++#  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
++#  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+ 
+ !ifdef $(CSM_ENABLE)
+   IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf {
+diff --git a/OvmfPkg/OvmfPkgX64.fdf b/OvmfPkg/OvmfPkgX64.fdf
+index 3615010..29f1eca 100644
+--- a/OvmfPkg/OvmfPkgX64.fdf
++++ b/OvmfPkg/OvmfPkgX64.fdf
+@@ -268,7 +268,7 @@ INF  IntelFrameworkModulePkg/Bus/Isa/IsaSerialDxe/IsaSerialDxe.inf
+ !endif
+ 
+ INF  IntelFrameworkModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2keyboardDxe.inf
+-INF  IntelFrameworkModulePkg/Bus/Isa/IsaFloppyDxe/IsaFloppyDxe.inf
++#INF  IntelFrameworkModulePkg/Bus/Isa/IsaFloppyDxe/IsaFloppyDxe.inf
+ 
+ INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+ INF  OvmfPkg/SmbiosPlatformDxe/SmbiosPlatformDxe.inf
+@@ -298,49 +298,49 @@ INF MdeModulePkg/Logo/LogoDxe.inf
+     SECTION PE32 = Intel3.5/EFIX64/E3507X2.EFI
+   }
+ !endif
+-  INF  MdeModulePkg/Universal/Network/SnpDxe/SnpDxe.inf
+-  INF  MdeModulePkg/Universal/Network/DpcDxe/DpcDxe.inf
+-  INF  MdeModulePkg/Universal/Network/MnpDxe/MnpDxe.inf
+-  INF  MdeModulePkg/Universal/Network/VlanConfigDxe/VlanConfigDxe.inf
+-  INF  MdeModulePkg/Universal/Network/ArpDxe/ArpDxe.inf
+-  INF  MdeModulePkg/Universal/Network/Dhcp4Dxe/Dhcp4Dxe.inf
+-  INF  MdeModulePkg/Universal/Network/Ip4Dxe/Ip4Dxe.inf
+-  INF  MdeModulePkg/Universal/Network/Mtftp4Dxe/Mtftp4Dxe.inf
+-  INF  MdeModulePkg/Universal/Network/Udp4Dxe/Udp4Dxe.inf
+-!if $(NETWORK_IP6_ENABLE) == TRUE
+-  INF  NetworkPkg/Ip6Dxe/Ip6Dxe.inf
+-  INF  NetworkPkg/TcpDxe/TcpDxe.inf
+-  INF  NetworkPkg/Udp6Dxe/Udp6Dxe.inf
+-  INF  NetworkPkg/Dhcp6Dxe/Dhcp6Dxe.inf
+-  INF  NetworkPkg/Mtftp6Dxe/Mtftp6Dxe.inf
+-  INF  NetworkPkg/UefiPxeBcDxe/UefiPxeBcDxe.inf
+-  INF  NetworkPkg/IScsiDxe/IScsiDxe.inf
+-!else
+-  INF  MdeModulePkg/Universal/Network/Tcp4Dxe/Tcp4Dxe.inf
+-  INF  MdeModulePkg/Universal/Network/UefiPxeBcDxe/UefiPxeBcDxe.inf
+-  INF  MdeModulePkg/Universal/Network/IScsiDxe/IScsiDxe.inf
+-!endif
+-!if $(HTTP_BOOT_ENABLE) == TRUE
+-  INF  NetworkPkg/DnsDxe/DnsDxe.inf
+-  INF  NetworkPkg/HttpUtilitiesDxe/HttpUtilitiesDxe.inf
+-  INF  NetworkPkg/HttpDxe/HttpDxe.inf
+-  INF  NetworkPkg/HttpBootDxe/HttpBootDxe.inf
+-!endif
+-!if $(TLS_ENABLE) == TRUE
+-  INF  NetworkPkg/TlsDxe/TlsDxe.inf
+-  INF  NetworkPkg/TlsAuthConfigDxe/TlsAuthConfigDxe.inf
+-!endif
+-  INF  OvmfPkg/VirtioNetDxe/VirtioNet.inf
++#  INF  MdeModulePkg/Universal/Network/SnpDxe/SnpDxe.inf
++#  INF  MdeModulePkg/Universal/Network/DpcDxe/DpcDxe.inf
++#  INF  MdeModulePkg/Universal/Network/MnpDxe/MnpDxe.inf
++#  INF  MdeModulePkg/Universal/Network/VlanConfigDxe/VlanConfigDxe.inf
++#  INF  MdeModulePkg/Universal/Network/ArpDxe/ArpDxe.inf
++#  INF  MdeModulePkg/Universal/Network/Dhcp4Dxe/Dhcp4Dxe.inf
++#  INF  MdeModulePkg/Universal/Network/Ip4Dxe/Ip4Dxe.inf
++#  INF  MdeModulePkg/Universal/Network/Mtftp4Dxe/Mtftp4Dxe.inf
++#  INF  MdeModulePkg/Universal/Network/Udp4Dxe/Udp4Dxe.inf
++#!if $(NETWORK_IP6_ENABLE) == TRUE
++#  INF  NetworkPkg/Ip6Dxe/Ip6Dxe.inf
++#  INF  NetworkPkg/TcpDxe/TcpDxe.inf
++#  INF  NetworkPkg/Udp6Dxe/Udp6Dxe.inf
++#  INF  NetworkPkg/Dhcp6Dxe/Dhcp6Dxe.inf
++#  INF  NetworkPkg/Mtftp6Dxe/Mtftp6Dxe.inf
++#  INF  NetworkPkg/UefiPxeBcDxe/UefiPxeBcDxe.inf
++#  INF  NetworkPkg/IScsiDxe/IScsiDxe.inf
++#!else
++#  INF  MdeModulePkg/Universal/Network/Tcp4Dxe/Tcp4Dxe.inf
++#  INF  MdeModulePkg/Universal/Network/UefiPxeBcDxe/UefiPxeBcDxe.inf
++#  INF  MdeModulePkg/Universal/Network/IScsiDxe/IScsiDxe.inf
++#!endif
++#!if $(HTTP_BOOT_ENABLE) == TRUE
++#  INF  NetworkPkg/DnsDxe/DnsDxe.inf
++#  INF  NetworkPkg/HttpUtilitiesDxe/HttpUtilitiesDxe.inf
++#  INF  NetworkPkg/HttpDxe/HttpDxe.inf
++#  INF  NetworkPkg/HttpBootDxe/HttpBootDxe.inf
++#!endif
++#!if $(TLS_ENABLE) == TRUE
++#  INF  NetworkPkg/TlsDxe/TlsDxe.inf
++#  INF  NetworkPkg/TlsAuthConfigDxe/TlsAuthConfigDxe.inf
++#!endif
++#  INF  OvmfPkg/VirtioNetDxe/VirtioNet.inf
+ 
+ #
+ # Usb Support
+ #
+-INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
+-INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
+-INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+-INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+-INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+-INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
++#INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
++#INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
++#INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
++#INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
++#INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
++#INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+ 
+ !ifdef $(CSM_ENABLE)
+ INF  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
+-- 
+2.4.11
+
