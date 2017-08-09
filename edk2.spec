@@ -4,7 +4,7 @@
 
 Name:       edk2
 Version:    2
-Release:    1
+Release:    2
 Summary:    EFI Development Kit II
 
 Group:      Applications/Emulators
