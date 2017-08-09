@@ -10,8 +10,8 @@ Summary:    EFI Development Kit II
 Group:      Applications/Emulators
 License:    BSD-2-Clause
 URL:        http://www.tianocore.org/edk2/
-Source0:    https://github.com/tianocore/edk2/archive/%{ovmf_tag}.tar.gz
-Source1:    https://www.openssl.org/source/openssl-%{openssl_version}.tar.gz
+Source0:    https://github.com/tianocore/edk2/archive/vUDK2017.tar.gz
+Source1:    https://www.openssl.org/source/openssl-1.1.0f.tar.gz
 Patch1:     0001-disabling-features-to-reduce-OVMF.fd-boot-time.patch
 
 BuildRequires:  python
