@@ -4,7 +4,7 @@
 
 Name:       edk2
 Version:    2
-Release:    2
+Release:    3
 Summary:    EFI Development Kit II
 
 Group:      Applications/Emulators
@@ -21,9 +21,14 @@ BuildRequires:  acpica-unix2
 BuildRequires:  nasm
 BuildRequires:  dosfstools
 
+Provides: clr-ovmf-bin
+Obsoletes: clr-ovmf-bin
+Provides: clr-ovmf-bin-data
+Obsoletes: clr-ovmf-bin-data
+
 %description
 EFI Development Kit II
-AARCH64 UEFI Firmware
+UEFI Firmware
 
 %prep
 %setup -q -n %{name}-%{ovmf_tag}
