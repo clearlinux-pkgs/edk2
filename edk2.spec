@@ -4,7 +4,7 @@
 
 Name:       edk2
 Version:    2
-Release:    3
+Release:    4
 Summary:    EFI Development Kit II
 
 Group:      Applications/Emulators
@@ -46,6 +46,8 @@ cd OvmfPkg/
 export SOURCE_DATE_EPOCH=1500666186
 mkdir -p %{buildroot}/usr/share/qemu
 cp Build/Ovmf%{target_arch}/DEBUG_GCC*/FV/OVMF.fd %{buildroot}/usr/share/qemu/OVMF.fd
+cp Build/Ovmf%{target_arch}/DEBUG_GCC*/FV/OVMF_CODE.fd %{buildroot}/usr/share/qemu/OVMF_CODE.fd
+cp Build/Ovmf%{target_arch}/DEBUG_GCC*/FV/OVMF_VARS.fd %{buildroot}/usr/share/qemu/OVMF_VARS.fd
 
 %files
 %defattr(-,root,root,-)
