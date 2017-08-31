@@ -4,7 +4,7 @@
 
 Name:       edk2
 Version:    2
-Release:    4
+Release:    5
 Summary:    EFI Development Kit II
 
 Group:      Applications/Emulators
@@ -52,3 +52,5 @@ cp Build/Ovmf%{target_arch}/DEBUG_GCC*/FV/OVMF_VARS.fd %{buildroot}/usr/share/qe
 %files
 %defattr(-,root,root,-)
 /usr/share/qemu/OVMF.fd
+/usr/share/qemu/OVMF_CODE.fd
+/usr/share/qemu/OVMF_VARS.fd
