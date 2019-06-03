@@ -1,0 +1,255 @@
+From c9214801a8b4912d385f52e2d9a0e8638e409ac9 Mon Sep 17 00:00:00 2001
+From: Jiaxin Wu <jiaxin.wu@intel.com>
+Date: Fri, 17 Nov 2017 10:22:41 +0800
+Subject: [Patch] NetworkPkg/DnsDxe: Check the received packet size before
+ parsing the message.
+
+Cc: Ye Ting <ting.ye@intel.com>
+Cc: Fu Siyuan <siyuan.fu@intel.com>
+Cc: Wang Fan <fan.wang@intel.com>
+Contributed-under: TianoCore Contribution Agreement 1.0
+Signed-off-by: Wu Jiaxin <jiaxin.wu@intel.com>
+Reviewed-by: Fu Siyuan <siyuan.fu@intel.com>
+---
+ NetworkPkg/DnsDxe/DnsImpl.c | 79 ++++++++++++++++++++++++++++++++++++++-------
+ NetworkPkg/DnsDxe/DnsImpl.h |  2 ++
+ 2 files changed, 70 insertions(+), 11 deletions(-)
+
+diff --git a/NetworkPkg/DnsDxe/DnsImpl.c b/NetworkPkg/DnsDxe/DnsImpl.c
+index 7057bfb..055d06c 100644
+--- a/NetworkPkg/DnsDxe/DnsImpl.c
++++ b/NetworkPkg/DnsDxe/DnsImpl.c
+@@ -1112,26 +1112,29 @@ IsValidDnsResponse (
+ /**
+   Parse Dns Response.
+ 
+   @param  Instance              The DNS instance
+   @param  RxString              Received buffer.
++  @param  Length                Received buffer length.
+   @param  Completed             Flag to indicate that Dns response is valid. 
+   
+   @retval EFI_SUCCESS           Parse Dns Response successfully.
+   @retval Others                Failed to parse Dns Response.
+   
+ **/ 
+ EFI_STATUS
+ ParseDnsResponse (
+   IN OUT DNS_INSTANCE              *Instance,
+   IN     UINT8                     *RxString,
++  IN     UINT32                    Length,
+      OUT BOOLEAN                   *Completed
+   )
+ {
+   DNS_HEADER            *DnsHeader;
+   
+   CHAR8                 *QueryName;
++  UINT32                QueryNameLen;
+   DNS_QUERY_SECTION     *QuerySection;
+   
+   CHAR8                 *AnswerName;
+   DNS_ANSWER_SECTION    *AnswerSection;
+   UINT8                 *AnswerData;
+@@ -1153,10 +1156,11 @@ ParseDnsResponse (
+ 
+   DNS_RESOURCE_RECORD   *Dns4RR;
+   DNS6_RESOURCE_RECORD  *Dns6RR;
+ 
+   EFI_STATUS            Status;
++  UINT32                RemainingLength;
+ 
+   EFI_TPL               OldTpl;
+   
+   Item             = NULL;
+   Dns4TokenEntry   = NULL;
+@@ -1176,11 +1180,22 @@ ParseDnsResponse (
+   Dns4RR           = NULL;
+   Dns6RR           = NULL;
+ 
+   *Completed       = TRUE;
+   Status           = EFI_SUCCESS;
+-  
++  RemainingLength  = Length;
++
++  //
++  // Check whether the remaining packet length is avaiable or not.
++  //
++  if (RemainingLength <= sizeof (DNS_HEADER)) {
++    *Completed = FALSE;
++    return EFI_ABORTED;
++  } else {
++    RemainingLength -= sizeof (DNS_HEADER);
++  }
++
+   //
+   // Get header
+   //
+   DnsHeader = (DNS_HEADER *) RxString;
+   
+@@ -1190,26 +1205,42 @@ ParseDnsResponse (
+   DnsHeader->AnswersNum = NTOHS (DnsHeader->AnswersNum);
+   DnsHeader->AuthorityNum = NTOHS (DnsHeader->AuthorityNum);
+   DnsHeader->AditionalNum = NTOHS (DnsHeader->AditionalNum);
+ 
+   //
++  // There is always one QuestionsNum in DNS message. The capability to handle more 
++  // than one requires to redesign the message format. Currently, it's not supported.
++  //
++  if (DnsHeader->QuestionsNum > 1) {
++    *Completed = FALSE;
++    return EFI_UNSUPPORTED;
++  }
++
++  //
+   // Get Query name
+   //
+   QueryName = (CHAR8 *) (RxString + sizeof (*DnsHeader));
+ 
++  QueryNameLen = (UINT32) AsciiStrLen (QueryName) + 1;
++
++  //
++  // Check whether the remaining packet length is avaiable or not.
++  //
++  if (RemainingLength <= QueryNameLen + sizeof (DNS_QUERY_SECTION)) {
++    *Completed = FALSE;
++    return EFI_ABORTED;
++  } else {
++    RemainingLength -= (QueryNameLen + sizeof (DNS_QUERY_SECTION));
++  }
++  
+   //
+   // Get query section
+   //
+-  QuerySection = (DNS_QUERY_SECTION *) (QueryName + AsciiStrLen (QueryName) + 1);
++  QuerySection = (DNS_QUERY_SECTION *) (QueryName + QueryNameLen);
+   QuerySection->Type = NTOHS (QuerySection->Type);
+   QuerySection->Class = NTOHS (QuerySection->Class);
+ 
+-  //
+-  // Get Answer name
+-  //
+-  AnswerName = (CHAR8 *) QuerySection + sizeof (*QuerySection);
+-
+   OldTpl = gBS->RaiseTPL (TPL_CALLBACK);
+ 
+   //
+   // Check DnsResponse Validity, if so, also get a valid NET_MAP_ITEM.
+   //
+@@ -1340,14 +1371,30 @@ ParseDnsResponse (
+   }
+ 
+   Status = EFI_NOT_FOUND;
+ 
+   //
++  // Get Answer name
++  //
++  AnswerName = (CHAR8 *) QuerySection + sizeof (*QuerySection);
++
++  //
+   // Processing AnswerSection.
+   //
+   while (AnswerSectionNum < DnsHeader->AnswersNum) {
+     //
++    // Check whether the remaining packet length is avaiable or not.
++    //
++    if (RemainingLength <= sizeof (UINT16) + sizeof (DNS_ANSWER_SECTION)) {
++      *Completed = FALSE;
++      Status = EFI_ABORTED;
++      goto ON_EXIT;
++    } else {
++      RemainingLength -= (sizeof (UINT16) + sizeof (DNS_ANSWER_SECTION));
++    }
++    
++    //
+     // Answer name should be PTR, else EFI_UNSUPPORTED returned.
+     //
+     if ((*(UINT8 *) AnswerName & 0xC0) != 0xC0) {
+       Status = EFI_UNSUPPORTED;
+       goto ON_EXIT;
+@@ -1361,10 +1408,21 @@ ParseDnsResponse (
+     AnswerSection->Class = NTOHS (AnswerSection->Class);
+     AnswerSection->Ttl = NTOHL (AnswerSection->Ttl);
+     AnswerSection->DataLength = NTOHS (AnswerSection->DataLength);
+ 
+     //
++    // Check whether the remaining packet length is avaiable or not.
++    //
++    if (RemainingLength < AnswerSection->DataLength) {
++      *Completed = FALSE;
++      Status = EFI_ABORTED;
++      goto ON_EXIT;
++    } else {
++      RemainingLength -= AnswerSection->DataLength;
++    }
++
++    //
+     // Check whether it's the GeneralLookUp querying.
+     //
+     if (Instance->Service->IpVersion == IP_VERSION_4 && Dns4TokenEntry->GeneralLookUp) {
+       Dns4RR = Dns4TokenEntry->Token->RspData.GLookupData->RRList;
+       AnswerData = (UINT8 *) AnswerSection + sizeof (*AnswerSection);
+@@ -1731,10 +1789,11 @@ DnsOnPacketReceived (
+   )
+ {
+   DNS_INSTANCE              *Instance;
+ 
+   UINT8                     *RcvString;
++  UINT32                    Len;
+ 
+   BOOLEAN                   Completed;
+   
+   Instance  = (DNS_INSTANCE *) Context;
+   NET_CHECK_SIGNATURE (Instance, DNS_INSTANCE_SIGNATURE);
+@@ -1746,21 +1805,19 @@ DnsOnPacketReceived (
+     goto ON_EXIT;
+   }
+ 
+   ASSERT (Packet != NULL);
+ 
+-  if (Packet->TotalSize <= sizeof (DNS_HEADER)) {
+-    goto ON_EXIT;
+-  }
++  Len = Packet->TotalSize;
+   
+   RcvString = NetbufGetByte (Packet, 0, NULL);
+   ASSERT (RcvString != NULL);
+   
+   //
+   // Parse Dns Response
+   //
+-  ParseDnsResponse (Instance, RcvString, &Completed);
++  ParseDnsResponse (Instance, RcvString, Len, &Completed);
+ 
+ ON_EXIT:
+ 
+   if (Packet != NULL) {
+     NetbufFree (Packet);
+diff --git a/NetworkPkg/DnsDxe/DnsImpl.h b/NetworkPkg/DnsDxe/DnsImpl.h
+index 3c6296c..e86610b 100644
+--- a/NetworkPkg/DnsDxe/DnsImpl.h
++++ b/NetworkPkg/DnsDxe/DnsImpl.h
+@@ -581,20 +581,22 @@ IsValidDnsResponse (
+ /**
+   Parse Dns Response.
+ 
+   @param  Instance              The DNS instance
+   @param  RxString              Received buffer.
++  @param  Length                Received buffer length.
+   @param  Completed             Flag to indicate that Dns response is valid. 
+   
+   @retval EFI_SUCCESS           Parse Dns Response successfully.
+   @retval Others                Failed to parse Dns Response.
+   
+ **/ 
+ EFI_STATUS
+ ParseDnsResponse (
+   IN OUT DNS_INSTANCE              *Instance,
+   IN     UINT8                     *RxString,
++  IN     UINT32                    Length,
+      OUT BOOLEAN                   *Completed
+   );
+ 
+ /**
+   Parse response packet.
+-- 
+1.9.5.msysgit.1
+
