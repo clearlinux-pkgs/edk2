@@ -5,7 +5,7 @@
 
 Name:       edk2
 Version:    2
-Release:    10
+Release:    11
 Summary:    EFI Development Kit II
 
 Group:      Applications/Emulators
@@ -15,6 +15,8 @@ Source0:    https://github.com/tianocore/edk2/archive/vUDK2018.tar.gz
 Source1:    https://www.openssl.org/source/openssl-1.1.0j.tar.gz
 Patch1:     0001-disabling-features-to-reduce-OVMF.fd-boot-time.patch
 Patch2:     0002-Remove-Werror-option-from-flags.patch
+Patch3:     CVE-2018-12178.patch
+Patch4:     CVE-2018-3613.patch
 
 BuildRequires:  python
 BuildRequires:  util-linux-dev
@@ -36,6 +38,8 @@ UEFI Firmware
 %setup -q -n %{name}-%{ovmf_tag}
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 mkdir -p %{openssl_dir}
 tar -C %{openssl_dir} --strip 1 -xf %{SOURCE1}
 
