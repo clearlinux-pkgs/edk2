@@ -3,6 +3,10 @@ From: rseetham <rakesh.seethamsetty@intel.com>
 Date: Fri, 7 Jun 2019 23:30:31 +0000
 Subject: [PATCH 1/2] disabling-features-to-reduce-OVMF.fd-boot-time.patch
 
+based in commid id: af961a23b8d70aa524f6d2513b6424b3be0893f3
+for a previous version of edk2 on clear, Network, USB and floppy
+support in Bios has been disabled
+
 ---
  OvmfPkg/OvmfPkgX64.dsc | 12 ++++++------
  OvmfPkg/OvmfPkgX64.fdf | 18 +++++++++---------
