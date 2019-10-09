@@ -5,7 +5,7 @@
 
 Name:       edk2
 Version:    2
-Release:    12
+Release:    13
 Summary:    EFI Development Kit II
 
 Group:      Applications/Emulators
@@ -16,7 +16,7 @@ Source1:    https://www.openssl.org/source/openssl-1.1.1b.tar.gz
 Patch1:     0001-disabling-features-to-reduce-OVMF.fd-boot-time.patch
 Patch2:     0002-Remove-Werror-option-from-flags.patch
 
-BuildRequires:  python
+BuildRequires:  python3
 BuildRequires:  util-linux-dev
 BuildRequires:  gcc
 BuildRequires:  acpica-unix2
