@@ -1,0 +1,34 @@
+From 210e08acc09d4b4d14bb1181ac2e9a3ff10fc089 Mon Sep 17 00:00:00 2001
+From: santoshkumar <santoshkumar.laxminarayan.rai@intel.com>
+Date: Tue, 10 Dec 2019 10:58:50 +0800
+Subject: [PATCH] resolved return error
+
+Something weired. Openssl source git commit log never had this error
+in code.  While taking openssl 1.1.1d source code tar
+then "return return 0" error code is found.
+
+Source tar from either github or openssl.org
+
+https://github.com/openssl/openssl/archive/OpenSSL_1_1_1d.tar.gz
+or
+https://www.openssl.org/source/openssl-1.1.1d.tar.gz
+---
+ CryptoPkg/Library/OpensslLib/openssl/crypto/threads_none.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CryptoPkg/Library/OpensslLib/openssl/crypto/threads_none.c b/CryptoPkg/Library/OpensslLib/openssl/crypto/threads_none.c
+index aabf0e0..aaaaae8 100644
+--- a/CryptoPkg/Library/OpensslLib/openssl/crypto/threads_none.c
++++ b/CryptoPkg/Library/OpensslLib/openssl/crypto/threads_none.c
+@@ -143,7 +143,7 @@ int openssl_get_fork_id(void)
+ # if defined(OPENSSL_SYS_UNIX)
+     return getpid();
+ # else
+-    return return 0;
++    return 0;
+ # endif
+ }
+ #endif
+-- 
+2.24.0
+

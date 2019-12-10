@@ -1,20 +1,20 @@
-%define ovmf_tag edk2-stable201905
+%define ovmf_tag edk2-stable201911
 %define target_arch X64
-%define openssl_version 1.1.1b
+%define openssl_version 1.1.1d
 %define openssl_dir CryptoPkg/Library/OpensslLib/openssl
 
 Name:       edk2
 Version:    2
-Release:    13
+Release:    14
 Summary:    EFI Development Kit II
 
 Group:      Applications/Emulators
 License:    BSD-2-Clause
 URL:        http://www.tianocore.org/edk2/
-Source0:    https://github.com/tianocore/edk2/archive/edk2-stable201905.tar.gz
-Source1:    https://www.openssl.org/source/openssl-1.1.1b.tar.gz
-Patch1:     0001-disabling-features-to-reduce-OVMF.fd-boot-time.patch
-Patch2:     0002-Remove-Werror-option-from-flags.patch
+Source0:    https://github.com/tianocore/edk2/archive/edk2-stable201911.tar.gz
+Source1:    https://www.openssl.org/source/openssl-1.1.1d.tar.gz
+Patch1:     0001-Remove-Werror-option-from-flags.patch
+Patch2:     0002-resolved-return-error.patch
 
 BuildRequires:  python3
 BuildRequires:  util-linux-dev
@@ -36,10 +36,10 @@ UEFI Firmware
 %prep
 %setup -q -n %{name}-%{ovmf_tag}
 %patch1 -p1
-%patch2 -p1
 
 mkdir -p %{openssl_dir}
 tar -C %{openssl_dir} --strip 1 -xf %{SOURCE1}
+%patch2 -p1
 
 %build
 export SOURCE_DATE_EPOCH=1526707454
