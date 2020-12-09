@@ -1,14 +1,18 @@
-%define ovmf_tag edk2-stable201911
+%define ovmf_tag edk2-stable202011
 %define target_arch X64
-%define openssl_version 1.1.1d
+%define openssl_version 1.1.1i
 %define openssl_dir CryptoPkg/Library/OpensslLib/openssl
+%define brotli_version 1.0.7
+%define brotli_compress_dir BaseTools/Source/C/BrotliCompress/brotli
+%define brotli_decompress_dir MdeModulePkg/Library/BrotliCustomDecompressLib/brotli
 
 Name     : edk2
-Version  : 2
-Release  : 14
+Version  : 202011
+Release  : 15
 URL      : http://www.tianocore.org/edk2/
-Source0  : https://github.com/tianocore/edk2/archive/edk2-stable201911.tar.gz
-Source1  : https://www.openssl.org/source/openssl-1.1.1d.tar.gz
+Source0  : https://github.com/tianocore/edk2/archive/edk2-stable202011.tar.gz
+Source1  : https://www.openssl.org/source/openssl-1.1.1i.tar.gz
+Source2  : https://github.com/google/brotli/archive/v1.0.7/brotli-1.0.7.tar.gz
 Summary  : EFI Development Kit II
 Group    : Applications/Emulators
 License  : BSD-2-Clause
@@ -20,7 +24,6 @@ BuildRequires: nasm
 BuildRequires: python3
 BuildRequires: util-linux-dev
 Patch1: 0001-Remove-Werror-option-from-flags.patch
-Patch2: 0002-resolved-return-error.patch
 
 Provides: clr-ovmf-bin
 Obsoletes: clr-ovmf-bin
@@ -36,7 +39,10 @@ UEFI Firmware
 %patch1 -p1
 mkdir -p %{openssl_dir}
 tar -C %{openssl_dir} --strip 1 -xf %{SOURCE1}
-%patch2 -p1
+mkdir -p %{brotli_compress_dir}
+tar -C %{brotli_compress_dir} --strip 1 -xf %{SOURCE2}
+mkdir -p %{brotli_decompress_dir}
+tar -C %{brotli_decompress_dir} --strip 1 -xf %{SOURCE2}
 
 %build
 export SOURCE_DATE_EPOCH=1526707454

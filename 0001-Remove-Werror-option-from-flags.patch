@@ -1,18 +1,18 @@
-From f565e2ba0e058a0e38f599e4e86ef5fb5edb6acd Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: santoshkumar <santoshkumar.laxminarayan.rai@intel.com>
 Date: Tue, 3 Dec 2019 21:30:02 +0800
 Subject: [PATCH] Remove-Werror-option-from-flags
 
 Signed-off-by: santoshkumar <santoshkumar.laxminarayan.rai@intel.com>
 ---
- BaseTools/Conf/tools_def.template | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ BaseTools/Conf/tools_def.template | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/BaseTools/Conf/tools_def.template b/BaseTools/Conf/tools_def.template
-index ca0b122..d1bfbea 100755
+index 933b316..6824d41 100755
 --- a/BaseTools/Conf/tools_def.template
 +++ b/BaseTools/Conf/tools_def.template
-@@ -1911,7 +1911,7 @@ NOOPT_*_*_OBJCOPY_ADDDEBUGFLAG     = --add-gnu-debuglink=$(DEBUG_DIR)/$(MODULE_N
+@@ -1918,7 +1918,7 @@ NOOPT_*_*_OBJCOPY_ADDDEBUGFLAG     = --add-gnu-debuglink=$(DEBUG_DIR)/$(MODULE_N
  *_*_*_DTCPP_PATH                   = DEF(DTCPP_BIN)
  *_*_*_DTC_PATH                     = DEF(DTC_BIN)
  
@@ -21,16 +21,7 @@ index ca0b122..d1bfbea 100755
  DEFINE GCC_IA32_CC_FLAGS           = DEF(GCC_ALL_CC_FLAGS) -m32 -malign-double -freorder-blocks -freorder-blocks-and-partition -O2 -mno-stack-arg-probe
  DEFINE GCC_X64_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -mno-red-zone -Wno-address -mno-stack-arg-probe
  DEFINE GCC_ARM_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -mlittle-endian -mabi=aapcs -fno-short-enums -funsigned-char -ffunction-sections -fdata-sections -fomit-frame-pointer -Wno-address -mthumb -mfloat-abi=soft -fno-pic -fno-pie
-@@ -1941,7 +1941,7 @@ DEFINE GCC_X64_RC_FLAGS            = -I binary -O elf64-x86-64        -B i386
- DEFINE GCC_ARM_RC_FLAGS            = -I binary -O elf32-littlearm     -B arm     --rename-section .data=.hii
- DEFINE GCC_AARCH64_RC_FLAGS        = -I binary -O elf64-littleaarch64 -B aarch64 --rename-section .data=.hii
- 
--DEFINE GCC48_ALL_CC_FLAGS            = -g -fshort-wchar -fno-builtin -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -ffunction-sections -fdata-sections -include AutoGen.h -fno-common -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings
-+DEFINE GCC48_ALL_CC_FLAGS            = -g -fshort-wchar -fno-builtin -fno-strict-aliasing -Wall -Wno-array-bounds -ffunction-sections -fdata-sections -include AutoGen.h -fno-common -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings
- DEFINE GCC48_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections -z common-page-size=0x20
- DEFINE GCC48_IA32_CC_FLAGS           = DEF(GCC48_ALL_CC_FLAGS) -m32 -march=i586 -malign-double -fno-stack-protector -D EFI32 -fno-asynchronous-unwind-tables -Wno-address
- DEFINE GCC48_X64_CC_FLAGS            = DEF(GCC48_ALL_CC_FLAGS) -m64 -fno-stack-protector "-DEFIAPI=__attribute__((ms_abi))" -maccumulate-outgoing-args -mno-red-zone -Wno-address -mcmodel=small -fpie -fno-asynchronous-unwind-tables -Wno-address
-@@ -2844,7 +2844,7 @@ NOOPT_CLANGPDB_X64_DLINK2_FLAGS     =
+@@ -2911,7 +2911,7 @@ NOOPT_CLANGPDB_X64_GENFW_FLAGS      = --keepexceptiontable
  ##################
  # ASL definitions
  ##################
@@ -39,7 +30,7 @@ index ca0b122..d1bfbea 100755
  *_XCODE5_*_ASLDLINK_FLAGS   = -e _ReferenceAcpiTable -preload -segalign 0x20  -pie -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
  *_XCODE5_*_ASLPP_FLAGS      = -x c -E -include AutoGen.h
  *_XCODE5_*_ASL_FLAGS        =
-@@ -2872,9 +2872,9 @@ RELEASE_XCODE5_IA32_ASM_FLAGS  = -arch i386
+@@ -2939,9 +2939,9 @@ RELEASE_XCODE5_IA32_ASM_FLAGS  = -arch i386
        *_XCODE5_IA32_NASM_FLAGS = -f macho32
  
  
@@ -52,7 +43,7 @@ index ca0b122..d1bfbea 100755
  
  ##################
  # X64 definitions
-@@ -2891,9 +2891,9 @@ RELEASE_XCODE5_X64_ASM_FLAGS  = -arch x86_64
+@@ -2958,9 +2958,9 @@ RELEASE_XCODE5_X64_ASM_FLAGS  = -arch x86_64
  *_XCODE5_*_PP_FLAGS         = -E -x assembler-with-cpp -include AutoGen.h
  *_XCODE5_*_VFRPP_FLAGS      = -x c -E -P -DVFRCOMPILE -include $(MODULE_NAME)StrDefs.h
  
@@ -65,6 +56,3 @@ index ca0b122..d1bfbea 100755
  
  ####################################################################################
  #
--- 
-2.23.0
-
