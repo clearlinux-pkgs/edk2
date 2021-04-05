@@ -1,17 +1,17 @@
-%define ovmf_tag edk2-stable202011
+%define ovmf_tag edk2-stable202102
 %define target_arch X64
-%define openssl_version 1.1.1i
+%define openssl_version 1.1.1k
 %define openssl_dir CryptoPkg/Library/OpensslLib/openssl
 %define brotli_version 1.0.7
 %define brotli_compress_dir BaseTools/Source/C/BrotliCompress/brotli
 %define brotli_decompress_dir MdeModulePkg/Library/BrotliCustomDecompressLib/brotli
 
 Name     : edk2
-Version  : 202011
-Release  : 18
+Version  : 202102
+Release  : 19
 URL      : http://www.tianocore.org/edk2/
-Source0  : https://github.com/tianocore/edk2/archive/edk2-stable202011.tar.gz
-Source1  : https://www.openssl.org/source/openssl-1.1.1i.tar.gz
+Source0  : https://github.com/tianocore/edk2/archive/edk2-stable202102/edk2-202102.tar.gz
+Source1  : https://www.openssl.org/source/openssl-1.1.1k.tar.gz
 Source2  : https://github.com/google/brotli/archive/v1.0.7/brotli-1.0.7.tar.gz
 Summary  : EFI Development Kit II
 Group    : Applications/Emulators
