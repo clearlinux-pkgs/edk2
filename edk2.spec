@@ -46,6 +46,7 @@ tar -C %{brotli_decompress_dir} --strip 1 -xf %{SOURCE2}
 
 %build
 export SOURCE_DATE_EPOCH=1526707454
+export GCC_IGNORE_WERROR=1
 cd OvmfPkg/
 ./build.sh -a %{target_arch} -D SECURE_BOOT_ENABLE -b RELEASE
 
