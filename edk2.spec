@@ -26,9 +26,9 @@ BuildRequires: util-linux-dev
 Patch1: 0001-Remove-Werror-option-from-flags.patch
 
 Provides: clr-ovmf-bin
-Obsoletes: clr-ovmf-bin
+Obsoletes: clr-ovmf-bin <= 2
 Provides: clr-ovmf-bin-data
-Obsoletes: clr-ovmf-bin-data
+Obsoletes: clr-ovmf-bin-data <= 2
 
 %description
 EFI Development Kit II
