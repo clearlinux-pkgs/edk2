@@ -8,7 +8,7 @@
 
 Name     : edk2
 Version  : 202102
-Release  : 19
+Release  : 20
 URL      : http://www.tianocore.org/edk2/
 Source0  : https://github.com/tianocore/edk2/archive/edk2-stable202102/edk2-202102.tar.gz
 Source1  : https://www.openssl.org/source/openssl-1.1.1k.tar.gz
